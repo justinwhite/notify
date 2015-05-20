@@ -1,10 +1,32 @@
 #!/bin/bash
 
-# the command to run
-COMMAND=$@
-
-# read the email address from the config file
+# read the email address to notify from the config file
 EMAIL=`cat ~/.notify | grep -i email | egrep -o "[a-zA-Z0-9]+@[a-zA-Z.]+"`
 
-# mail the output when the command is finished
-$COMMAND 2>&1 | tee >(mail -s "Command Finished: $COMMAND" "$EMAIL") 
+# used in functions below
+COMMAND=
+
+function usage
+{
+	echo "usage:	`basename $0` command_to_run"
+}
+
+# run the input command 
+# redirecting stderr to stdout 
+# and notify via mail when finished
+function notify
+{
+	$COMMAND 2>&1 | tee >(mail -s "Command Finished: $COMMAND" "$EMAIL") 
+}
+
+while [ "$1" != "" ]; do
+	case $1 in 
+		-h | --help ) 	usage
+						exit
+						;;
+		* )				COMMAND=$@
+						notify
+						exit
+	esac
+	shift
+done
