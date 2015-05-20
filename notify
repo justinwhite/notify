@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# the command to run
+COMMAND=$@
+
+# read the email address from the config file
+EMAIL=`cat ~/.notify | grep -i email | egrep -o "[a-zA-Z0-9]+@[a-zA-Z.]+"`
+
+# mail the output when the command is finished
+$COMMAND 2>&1 | tee >(mail -s "Command Finished: $COMMAND" "$EMAIL") 
