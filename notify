@@ -18,7 +18,7 @@ function usage
 # and notify via mail when finished
 function notify
 {
-  if [ "$USE_EMAIL" -eq "1" ]; then
+  if [[ "$USE_EMAIL" -eq 1 ]]; then
     $COMMAND 2>&1 | tee >(mail -s "Command Finished: $COMMAND" "$EMAIL") 
   else
     $COMMAND 2>&1 | head -c 100 | tee >(mail -s "Command Finished" "$SMS")
