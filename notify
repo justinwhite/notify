@@ -2,6 +2,8 @@
 
 # read the email address to notify from the config file
 EMAIL=`cat ~/.notify | grep -i email | egrep -o "[a-zA-Z0-9]+@[a-zA-Z.]+"`
+SMS=`cat ~/.notify | grep -i sms | egrep -o "[0-9]+@[a-zA-Z.]+"`
+USE_EMAIL=
 
 # used in functions below
 COMMAND=
@@ -16,17 +18,26 @@ function usage
 # and notify via mail when finished
 function notify
 {
-	$COMMAND 2>&1 | tee >(mail -s "Command Finished: $COMMAND" "$EMAIL") 
+  if [ "$USE_EMAIL" -eq "1" ]; then
+    $COMMAND 2>&1 | tee >(mail -s "Command Finished: $COMMAND" "$EMAIL") 
+  else
+    $COMMAND 2>&1 | head -c 100 | tee >(mail -s "Command Finished" "$SMS")
+  fi
 }
 
 while [ "$1" != "" ]; do
 	case $1 in 
-		-h | --help ) 	usage
-						exit
-						;;
-		* )				COMMAND=$@
-						notify
-						exit
+    -e|--email )       
+    USE_EMAIL=1
+    ;;
+		-h|--help ) 	
+    usage
+    exit
+    ;;
+		* )			        
+    COMMAND=$@
+    notify
+    exit
 	esac
 	shift
 done
