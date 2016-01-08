@@ -1,9 +1,10 @@
 # notify
-Start a process and notify via email when it completes
+Start a process and notify via email or SMS when it completes
 
 ## Install
 ```
 echo "email=you@email.com" >> ~/.notify
+echo "sms=tendigitphonenumber@provideremail.com" >> ~/.notify
 export PATH=~/notify:$PATH
 ```
 
